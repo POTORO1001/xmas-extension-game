@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PO・TORO クリスマス延長くじ</title>
+  <meta name="format-detection" content="telephone=no" />
+  <style>
+    :root {
+      --bg-top: #ffe6f1;
+      --bg-bottom: #ffcad4;
+      --accent: #e63972;
+      --accent-dark: #c0275a;
+      --text-main: #402020;
+      --card-bg: #fff8fc;
+      --shadow-soft: 0 8px 20px rgba(0,0,0,.12);
+      --ok: #ffbf00;
+      --sub: #ff6f91;
+      --ng: #cccccc;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "游ゴシック体", "Yu Gothic", sans-serif;
+      background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+      color: var(--text-main);
+    }
+
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 768px;
+      margin: 0 auto;
+      padding: 12px 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 6px 8px 4px;
+    }
+
+    .logo-text {
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .logo-text span {
+      background: linear-gradient(90deg, #ff6f91, #ffafbd);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .subtitle strong {
+      color: var(--accent);
+    }
+
+    .main-card {
+      flex: 1;
+      background: var(--card-bg);
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+      padding: 14px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ribbon-label {
+      position: absolute;
+      top: 10px;
+      right: -24px;
+      transform: rotate(10deg);
+      background: linear-gradient(90deg, #ff6f91, #ffafbd);
+      color: #fff;
+      padding: 4px 40px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 10px rgba(0,0,0,.16);
+    }
+
+    .stage-title {
+      text-align: center;
+      margin-top: 6px;
+      margin-bottom: 8px;
+    }
+
+    .stage-title-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,.1);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .stage-title-main span.emoji {
+      font-size: 18px;
+    }
+
+    .stage-title-sub {
+      margin-top: 4px;
+      font-size: 11px;
+      opacity: .8;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 8px 4px;
+    }
+
+    .present-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .present-icon-wrap {
+      width: 150px;
+      height: 150px;
+      border-radius: 32px;
+      background: radial-gradient(circle at 30% 10%, #ffffff, #ffe0f1);
+      box-shadow: 0 12px 24px rgba(0,0,0,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .present-icon {
+      font-size: 72px;
+      transition: transform .15s ease-out;
+    }
+
+    .present-glow {
+      position: absolute;
+      width: 180%;
+      height: 180%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,.7), transparent 60%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+
+    .present-label {
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .hint-label {
+      font-size: 11px;
+      opacity: .75;
+    }
+
+    .btn-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn-main {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 40px;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(0,0,0,.22);
+      cursor: pointer;
+      transform: translateY(0);
+      transition: transform .08s ease-out, box-shadow .08s ease-out, opacity .15s;
+    }
+
+    .btn-main:active {
+      transform: translateY(2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,.25);
+    }
+
+    .btn-main[disabled] {
+      opacity: .4;
+      cursor: default;
+      transform: translateY(2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,.15);
+    }
+
+    .rule-text {
+      font-size: 11px;
+      opacity: .8;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 10px;
+      opacity: .8;
+      margin-top: 2px;
+    }
+
+    .footer span.brand {
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    /* 結果モーダル */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease-out;
+      z-index: 50;
+    }
+
+    .modal-backdrop.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      width: min(90vw, 420px);
+      background: #fffdfb;
+      border-radius: 20px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.4);
+      padding: 16px 14px 14px;
+      text-align: center;
+      transform: translateY(16px) scale(.96);
+      opacity: 0;
+      transition: transform .2s ease-out, opacity .2s ease-out;
+    }
+
+    .modal-backdrop.show .modal {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .modal-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-size: 12px;
+      padding: 3px 12px;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .modal-badge.ok {
+      background: #ffe9a3;
+      color: #8a5a00;
+    }
+
+    .modal-badge.sub {
+      background: #ffd3e6;
+      color: #9c2356;
+    }
+
+    .modal-badge.ng {
+      background: #eeeeee;
+      color: #666;
+    }
+
+    .modal-rank {
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .modal-prize-name {
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .modal-desc {
+      font-size: 13px;
+      opacity: .85;
+      margin-bottom: 12px;
+    }
+
+    .modal-note {
+      font-size: 11px;
+      opacity: .8;
+      margin-bottom: 10px;
+    }
+
+    .modal-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 28px;
+      font-size: 14px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ff9a9e, #fecfef);
+      color: #5b2730;
+      box-shadow: 0 6px 14px rgba(0,0,0,.25);
+      cursor: pointer;
+    }
+
+    /* 簡易アニメーション */
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      50% { transform: translateX(4px); }
+      75% { transform: translateX(-2px); }
+      100% { transform: translateX(0); }
+    }
+
+    .shaking {
+      animation: shake .25s linear infinite;
+    }
+
+    @media (min-height: 820px) {
+      .present-icon-wrap {
+        width: 170px;
+        height: 170px;
+      }
+      .present-icon {
+        font-size: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="logo-text">
+        <!-- 画像ロゴを使う場合は下記コメントを解除して <img> に差し替え -->
+        <!-- <img src="logo.png" alt="PO・TORO" style="height:32px;"> -->
+        <span>PO・TORO</span>
+      </div>
+      <div class="subtitle">
+        クリスマス <strong>延長くじ</strong> ゲーム
+      </div>
+    </header>
+
+    <main class="main-card">
+      <div class="ribbon-label">XMAS EXTENSION</div>
+
+      <div class="stage-title">
+        <div class="stage-title-main">
+          <span class="emoji">🎄</span>
+          <span>延長ごとに 1 回チャレンジ！</span>
+        </div>
+        <div class="stage-title-sub">
+          サンタメイドさんから、ご主人様へ ひとくちプレゼント♡
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="present-area">
+          <div class="present-icon-wrap">
+            <div class="present-glow" id="present-glow"></div>
+            <div class="present-icon" id="present-icon">🎁</div>
+          </div>
+          <div class="present-label">タップでプレゼントをオープン！</div>
+          <div class="hint-label">※メイドさんと一緒にタップしてね</div>
+        </div>
+
+        <div class="btn-area">
+          <button class="btn-main" id="btn-draw">プレゼントをあける</button>
+          <div class="rule-text">
+            延長 1 セットにつき、<br>
+            ご主人様おひとり <strong>1 回まで</strong> チャレンジできます。
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <span class="brand">PO・TORO</span> CHRISTMAS EVENT
+      </footer>
+    </main>
+  </div>
+
+  <!-- 結果モーダル -->
+  <div class="modal-backdrop" id="result-modal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div id="modal-badge" class="modal-badge">結果</div>
+      <div id="modal-rank" class="modal-rank">S賞</div>
+      <div id="modal-prize-name" class="modal-prize-name">サンタメイドスペシャル</div>
+      <div id="modal-desc" class="modal-desc">
+        サンタコスのメイドさんから、とっておきのプレゼント♡
+      </div>
+      <div id="modal-note" class="modal-note">
+        特典内容はメイドさんにご確認ください。
+      </div>
+      <button class="modal-btn" id="btn-close-modal">OK</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== 設定エリア =====
+    // ※ここを書き換えるだけで「景品の名前・説明・確率」を簡単に調整できます。
+    const PRIZES = [
+      {
+        id: "S",
+        rankLabel: "S賞",
+        prizeName: "サンタメイド スペシャル特典",
+        desc: "本日のご主人様、大大大あたりです…！特別なプレゼントをお受け取りください♡",
+        note: "例：クリスマスチェキサービス、サンタメイドからの直筆カードなど",
+        badgeType: "ok",
+        weight: 3  // ★確率：小さいほど出にくい（合計に対する比率）
+      },
+      {
+        id: "A",
+        rankLabel: "A賞",
+        prizeName: "クリスマスご褒美",
+        desc: "サンタメイドからのご褒美プレゼントです♪",
+        note: "例：ドリンク割引、トッピングサービスなど",
+        badgeType: "ok",
+        weight: 15
+      },
+      {
+        id: "B",
+        rankLabel: "B賞",
+        prizeName: "おかしプレゼント",
+        desc: "メイドさんおすすめのおかしをプレゼント♡",
+        note: "内容は日によって変わるかも…？お楽しみに！",
+        badgeType: "sub",
+        weight: 32
+      },
+      {
+        id: "C",
+        rankLabel: "C賞",
+        prizeName: "サンタメッセージ",
+        desc: "サンタメイドからのひとことメッセージをお届けします。",
+        note: "はずれはありません。ご主人様と過ごせる時間が、いちばんのプレゼントです♡",
+        badgeType: "ng",
+        weight: 50
+      }
+    ];
+    // =====================
+
+    const btnDraw = document.getElementById("btn-draw");
+    const presentIcon = document.getElementById("present-icon");
+    const presentGlow = document.getElementById("present-glow");
+
+    const modalBackdrop = document.getElementById("result-modal");
+    const modalBadge = document.getElementById("modal-badge");
+    const modalRank = document.getElementById("modal-rank");
+    const modalPrizeName = document.getElementById("modal-prize-name");
+    const modalDesc = document.getElementById("modal-desc");
+    const modalNote = document.getElementById("modal-note");
+    const btnCloseModal = document.getElementById("btn-close-modal");
+
+    let isDrawing = false;
+
+    function pickPrize() {
+      const total = PRIZES.reduce((sum, p) => sum + p.weight, 0);
+      const r = Math.random() * total;
+      let acc = 0;
+      for (const p of PRIZES) {
+        acc += p.weight;
+        if (r <= acc) return p;
+      }
+      return PRIZES[PRIZES.length - 1];
+    }
+
+    function showResult(prize) {
+      modalRank.textContent = prize.rankLabel;
+      modalPrizeName.textContent = prize.prizeName;
+      modalDesc.textContent = prize.desc;
+      modalNote.textContent = prize.note || "";
+
+      modalBadge.className = "modal-badge";
+      if (prize.badgeType === "ok") {
+        modalBadge.classList.add("ok");
+        modalBadge.textContent = "大当たり";
+      } else if (prize.badgeType === "sub") {
+        modalBadge.classList.add("sub");
+        modalBadge.textContent = "おめでとう";
+      } else {
+        modalBadge.classList.add("ng");
+        modalBadge.textContent = "プレゼント";
+      }
+
+      modalBackdrop.classList.add("show");
+    }
+
+    function startDraw() {
+      if (isDrawing) return;
+      isDrawing = true;
+      btnDraw.disabled = true;
+
+      presentGlow.style.opacity = 1;
+      presentIcon.classList.add("shaking");
+
+      // 超シンプルアニメーション：0.8秒後に結果
+      setTimeout(() => {
+        presentGlow.style.opacity = 0;
+        presentIcon.classList.remove("shaking");
+        const prize = pickPrize();
+        showResult(prize);
+      }, 800);
+    }
+
+    function resetForNext() {
+      modalBackdrop.classList.remove("show");
+      btnDraw.disabled = false;
+      isDrawing = false;
+    }
+
+    // イベント登録
+    btnDraw.addEventListener("click", startDraw);
+    btnDraw.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      startDraw();
+    });
+
+    btnCloseModal.addEventListener("click", resetForNext);
+    btnCloseModal.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      resetForNext();
+    });
+
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) {
+        resetForNext();
+      }
+    });
+  </script>
+</body>
+</html>
